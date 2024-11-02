@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>واجهة ثلاثية الأبعاد تفاعلية</title>
+    <style>
+        /* إعدادات الصفحة الأساسية */
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+            perspective: 1000px;
+            background: #1a1a2e;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* الخلفية المتحركة */
+        @keyframes backgroundAnimate {
+            0% { background-position: 0 0; }
+            100% { background-position: 1000px 1000px; }
+        }
+        body {
+            background: linear-gradient(45deg, #141e30, #243b55);
+            background-size: 200% 200%;
+            animation: backgroundAnimate 15s linear infinite;
+        }
+
+        /* إعدادات الحاوية ثلاثية الأبعاد */
+        .cube-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            transform-style: preserve-3d;
+            animation: rotateCube 10s infinite linear;
+            cursor: pointer;
+        }
+
+        /* إعدادات الأوجه */
+        .face {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #fff;
+            backface-visibility: hidden;
+            transition: background 0.5s, color 0.5s;
+        }
+        .face1 { background: #1e90ff; transform: rotateY(0deg) translateZ(100px); }
+        .face2 { background: #ff69b4; transform: rotateY(90deg) translateZ(100px); }
+        .face3 { background: #4b0082; transform: rotateY(180deg) translateZ(100px); }
+        .face4 { background: #228b22; transform: rotateY(-90deg) translateZ(100px); }
+
+        /* تأثيرات الشرار والنار */
+        .fire-effect {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 50px;
+            height: 50px;
+            background: radial-gradient(circle, rgba(255,69,0,1) 0%, rgba(255,165,0,0) 80%);
+            border-radius: 50%;
+            opacity: 0;
+            animation: fire 1s forwards;
+        }
+        @keyframes fire {
+            0% { transform: scale(0); opacity: 1; }
+            100% { transform: scale(3); opacity: 0; }
+        }
+
+        /* حركة دوران المكعب */
+        @keyframes rotateCube {
+            0% { transform: rotateY(0deg); }
+            100% { transform: rotateY(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="cube-container" id="cube">
+        <div class="face face1" data-page="page1">العب الحر</div>
+        <div class="face face2" data-page="page2">العب الوردي</div>
+        <div class="face face3" data-page="page3">المسابقات</div>
+        <div class="face face4" data-page="page4">العب المحدود</div>
+    </div>
+
+    <script>
+        const cube = document.getElementById('cube');
+
+        // إضافة تأثير الشرار والنار عند الضغط على أحد الأوجه
+        function showFireEffect(event) {
+            const fire = document.createElement('div');
+            fire.className = 'fire-effect';
+            fire.style.left = `${event.clientX - 25}px`;
+            fire.style.top = `${event.clientY - 25}px`;
+            document.body.appendChild(fire);
+
+            setTimeout(() => {
+                fire.remove();
+            }, 1000);
+        }
+
+        // التنقل إلى الصفحة المطلوبة عند النقر على أحد الأوجه
+        function navigateToPage(event) {
+            cube.style.animationPlayState = 'paused'; // إيقاف حركة المكعب
+            const face = event.target;
+            const page = face.getAttribute('data-page');
+            showFireEffect(event);
+
+            // انتظار تأثير النار قبل الانتقال إلى الصفحة
+            setTimeout(() => {
+                alert(`الانتقال إلى: ${page}`); // يمكنك استبدال هذا بـ redirection حقيقي
+                cube.style.animationPlayState = 'running'; // إعادة تشغيل حركة المكعب
+            }, 500);
+        }
+
+        // إضافة الاستماع للأوجه للنقر
+        document.querySelectorAll('.face').forEach(face => {
+            face.addEventListener('click', navigateToPage);
+        });
+    </script>
+</body>
+</html>
